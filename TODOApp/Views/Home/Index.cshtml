@@ -21,25 +21,31 @@
                     <th>
                         @*@Html.DisplayNameFor(model => model.UpdatedDateTime)*@
                     </th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Title)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @*@Html.DisplayFor(modelItem => item.Status.ToString())*@
-                        </td>
-                        <td>
-                            @*@Html.DisplayFor(modelItem => item.UpdatedDateTime)*@
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.Status.ToString())*@
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.UpdatedDateTime)*@
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = @item.ToDoId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = @item.ToDoId },
+                        new { onclick = "return confirm('Are you sure you wish to delete this TODO?');" })
+                    </td>
+                </tr>
                 }
             </tbody>
             <tfoot>

@@ -21,7 +21,7 @@ namespace AppBoard.API
         /// <summary>
         /// The TODO repository
         /// </summary>
-        private IGenericRepository<ToDo> repository = null;
+        private ITODORepository repository = null;
 
         #endregion
 
@@ -32,14 +32,14 @@ namespace AppBoard.API
         /// </summary>
         public TODOController()
         {
-            this.repository = new GenericRepository<ToDo>();
+            this.repository = new TODORepository();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TODOController"/> class.
         /// </summary>
         /// <param name="repository">The repository.</param>
-        public TODOController(IGenericRepository<ToDo> repository)
+        public TODOController(ITODORepository repository)
         {
             this.repository = repository;
         }

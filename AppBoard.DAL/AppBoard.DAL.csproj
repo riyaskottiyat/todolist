@@ -76,8 +76,12 @@
       <DependentUpon>AppBoardModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Core\IRepository.cs" />
-    <Compile Include="GenericRepository.cs" />
+    <Compile Include="Core\BaseRepository.cs" />
+    <Compile Include="Interfaces\IUserRepository.cs" />
+    <Compile Include="Interfaces\ITODORepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserRepository.cs" />
+    <Compile Include="TODORepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppBoardModel.Context.tt">

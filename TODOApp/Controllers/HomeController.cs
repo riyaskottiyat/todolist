@@ -96,5 +96,87 @@ namespace TODOApp.Controllers
             }
             return View();
         }
+
+        /// <summary>
+        /// Edits the specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpGet]
+        public async Task<ActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(APIURL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = await client.GetAsync(string.Concat(APIURL, "/TODO/", id));
+                if (response.IsSuccessStatusCode)
+                {
+                    ToDo todoItem = response.Content.ReadAsAsync<ToDo>().Result;
+                    return View(todoItem);
+                }
+            }
+
+            return View();
+        }
+
+        /// <summary>
+        /// Edits the specified todo item.
+        /// </summary>
+        /// <param name="todoItem">The todo item.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpPost]
+        public async Task<ActionResult> Edit(ToDo todoItem)
+        {
+            if (ModelState.IsValid)
+            {
+                // TODO: Update user
+                todoItem.UserId = 1;
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(string.Concat(APIURL, "/TODO"));
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    //client.DefaultRequestHeaders.Add("Authorization", "Basic QWRtaW46UGFzc3dAcmQyMDE5");
+                    string jsonString = JsonConvert.SerializeObject(todoItem);
+                    var jsoncontent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PutAsync(string.Concat(APIURL, "/TODO"), jsoncontent);
+                    return RedirectToAction("Index");
+                }
+            }
+            return View();
+        }
+
+        /// <summary>
+        /// Deletes the specified TOTO item.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpGet]
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(string.Concat(APIURL, "/TODO"));
+                client.DefaultRequestHeaders.Accept.Clear();
+                // client.DefaultRequestHeaders.Add("Authorization", "Basic QWRtaW46UGFzc3dAcmQyMDE5");
+                HttpResponseMessage response = await client.DeleteAsync(string.Concat(APIURL, "/TODO/", id.Value));
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
     }
 }

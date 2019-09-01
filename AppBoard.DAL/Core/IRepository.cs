@@ -11,7 +11,7 @@ namespace AppBoard.DAL
     /// Generic Repository Interface 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IGenericRepository<T> where T : class
+    public interface IRepository<T> where T : class
     {
         /// <summary>Gets all.</summary>
         /// <returns>IEnumerable&lt;T&gt;.</returns>
