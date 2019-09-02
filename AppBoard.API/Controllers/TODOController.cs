@@ -73,6 +73,18 @@ namespace AppBoard.API
             return model;
         }
 
+        /// <summary>
+        /// Gets my TODOS.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>IEnumerable&lt;ToDo&gt;.</returns>
+        [Route("TODO/User/{userId}")]
+        public IEnumerable<ToDo> GetMyTODOS(int userId)
+        {
+            IEnumerable<ToDo> model = repository.GetMyTODOS(userId);
+            return model;
+        }
+
         [HttpPost]
         [Route("TODO")]
         public void post([FromBody]ToDo value)

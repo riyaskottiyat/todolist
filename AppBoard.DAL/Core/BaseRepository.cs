@@ -19,7 +19,7 @@ namespace AppBoard.DAL
         /// <summary>
         /// The context
         /// </summary>
-        private AppBoardDBContext _context = null;
+        protected AppBoardDBContext _context = null;
         /// <summary>
         /// The table
         /// </summary>

@@ -15,5 +15,15 @@ namespace AppBoard.DAL
     public class TODORepository: BaseRepository<ToDo>, ITODORepository
     {
         // Custom DB operations 
+
+        /// <summary>
+        /// Gets my todos.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>IEnumerable&lt;ToDo&gt;.</returns>
+        public IEnumerable<ToDo> GetMyTODOS(int userId)
+        {
+            return _context.ToDoes.Where(t => t.UserId == userId);
+        }
     }
 }

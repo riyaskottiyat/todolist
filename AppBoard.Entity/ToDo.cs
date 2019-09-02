@@ -11,6 +11,7 @@ namespace AppBoard.Entity
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Class ToDo
@@ -26,6 +27,7 @@ namespace AppBoard.Entity
         /// Gets or sets the title.
         /// </summary>
         /// <value>The title.</value>
+        [Required]
         public string Title { get; set; }
         /// <summary>
         /// Gets or sets the description.

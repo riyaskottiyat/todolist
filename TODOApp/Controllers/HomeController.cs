@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using TODOApp.Security;
 
 namespace TODOApp.Controllers
 {
@@ -36,9 +37,60 @@ namespace TODOApp.Controllers
         }
 
         /// <summary>
+        /// Logins this instance.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> Login()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Logins the specified user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>ActionResult.</returns>
+        [HttpPost]
+        [AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public ActionResult Login(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    // TODO: Authenticate from database
+                    if (user.Name.Equals("admin1") && user.Password.Equals("Passw@rd123"))
+                    {
+                        // Setting User id on session
+                        HttpContext.Session["UserId"] = 1;
+
+                        return RedirectToAction("Index");
+                    }
+                    else if (user.Name.Equals("admin2") && user.Password.Equals("Passw@rd123"))
+                    {
+                        // Setting User id on session
+                        HttpContext.Session["UserId"] = 2;
+
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        return View(new User() { UserId = -1 });
+                    }
+                }
+            }
+            return View();
+        }
+
+        /// <summary>
         /// Indexes this instance.
         /// </summary>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpGet]
+        [Authenticate]
         public async Task<ActionResult> Index()
         {
             using (HttpClient client = new HttpClient())
@@ -47,7 +99,7 @@ namespace TODOApp.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = await client.GetAsync(string.Concat(APIURL, "/TODO"));
+                HttpResponseMessage response = await client.GetAsync(string.Concat(APIURL, "/TODO/User/", HttpContext.Session["UserId"].ToString()));
                 if (response.IsSuccessStatusCode)
                 {
                     IEnumerable<ToDo> todoList = response.Content.ReadAsAsync<IEnumerable<ToDo>>().Result;
@@ -63,6 +115,7 @@ namespace TODOApp.Controllers
         /// </summary>
         /// <returns>ActionResult.</returns>
         [HttpGet]
+        [Authenticate]
         public ActionResult Add()
         {
             return View();
@@ -74,12 +127,15 @@ namespace TODOApp.Controllers
         /// <param name="todoItem">The todo item.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
+        [Authenticate]
         public async Task<ActionResult> Add(ToDo todoItem)
         {
             if (ModelState.IsValid)
             {
                 // TODO: Current User
-                todoItem.UserId = 1;
+                todoItem.UserId = HttpContext.Session["UserId"] != null ? Convert.ToInt32(HttpContext.Session["UserId"]) : 0;
+                todoItem.CreatedDateTime = todoItem.UpdatedDateTime = DateTime.Now;
+                todoItem.Status = false;
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -103,6 +159,7 @@ namespace TODOApp.Controllers
         /// <param name="id">The identifier.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
+        [Authenticate]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -132,12 +189,14 @@ namespace TODOApp.Controllers
         /// <param name="todoItem">The todo item.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
+        [Authenticate]
         public async Task<ActionResult> Edit(ToDo todoItem)
         {
             if (ModelState.IsValid)
             {
-                // TODO: Update user
-                todoItem.UserId = 1;
+                // Updated Date & Time
+                todoItem.UpdatedDateTime = DateTime.Now;
+                todoItem.UserId = HttpContext.Session["UserId"] != null ? Convert.ToInt32(HttpContext.Session["UserId"]) : 0;
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -161,6 +220,7 @@ namespace TODOApp.Controllers
         /// <param name="id">The identifier.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
+        [Authenticate]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)

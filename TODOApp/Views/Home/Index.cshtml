@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<AppBoard.Entity.ToDo>
 <div class="row">
-    @*<img class="hidden-xs" src="~/Images/todo.png" height="40" />*@
-    <h1 class="display-1">My TODO List</h1>
+    <div class="row" style="margin-left:10px">
+        <img src="~/Images/icon.png" />
+    </div>
 </div>
 
 <div class="row">
@@ -9,6 +10,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>
                         @Html.DisplayNameFor(model => model.Title)
                     </th>
@@ -27,25 +29,31 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @*@Html.DisplayFor(modelItem => item.Status.ToString())*@
-                    </td>
-                    <td>
-                        @*@Html.DisplayFor(modelItem => item.UpdatedDateTime)*@
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = @item.ToDoId }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = @item.ToDoId },
-                        new { onclick = "return confirm('Are you sure you wish to delete this TODO?');" })
-                    </td>
-                </tr>
+                    <tr>
+                        <td>
+                            @{
+                                bool checkStatus = item.Status.HasValue ? item.Status.Value : false;
+                            }
+                            <input type="checkbox" name="Status" class="myTick" checked="@checkStatus" onchange="TickMe(@item.ToDoId, @checkStatus)" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @*@Html.DisplayFor(modelItem => item.Status.ToString())*@
+                        </td>
+                        <td>
+                            @*@Html.DisplayFor(modelItem => item.UpdatedDateTime)*@
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Home", new { id = @item.ToDoId })" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
+                            @*<a href="@Url.Action("Delete", "Home", new { id = @item.ToDoId })" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a>*@
+                            @Html.ActionLink("Delete", "Delete", new { id = @item.ToDoId }, new { onclick = "return confirm('Are you sure you wish to delete this TODO?');", @class = "btn btn-default" })
+                        </td>
+                    </tr>
                 }
             </tbody>
             <tfoot>
@@ -57,4 +65,11 @@
             </tfoot>
         </table>
     </div>
+    <script src="/todoapp/Scripts/jquery-3.3.1.js"></script>
+    <script>
+        function TickMe(id, sts) {
+            alert(sts);
+        }
+    </script>
 </div>
+
