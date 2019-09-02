@@ -66,6 +66,7 @@ namespace TODOApp.Controllers
                     {
                         // Setting User id on session
                         HttpContext.Session["UserId"] = 1;
+                        HttpContext.Session["UserName"] = "Admin 1";
 
                         return RedirectToAction("Index");
                     }
@@ -73,6 +74,7 @@ namespace TODOApp.Controllers
                     {
                         // Setting User id on session
                         HttpContext.Session["UserId"] = 2;
+                        HttpContext.Session["UserName"] = "Admin 2";
 
                         return RedirectToAction("Index");
                     }
@@ -82,6 +84,18 @@ namespace TODOApp.Controllers
                     }
                 }
             }
+            return View();
+        }
+
+        /// <summary>
+        /// Logouts from the App.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
+        [HttpGet]
+        [Authenticate]
+        public ActionResult Logout()
+        {
+            HttpContext.Session["UserId"] = HttpContext.Session["UserName"] = null;
             return View();
         }
 
@@ -208,6 +222,50 @@ namespace TODOApp.Controllers
                     var jsoncontent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
                     HttpResponseMessage response = await client.PutAsync(string.Concat(APIURL, "/TODO"), jsoncontent);
+                    return RedirectToAction("Index");
+                }
+            }
+            return View();
+        }
+
+        /// <summary>
+        /// Updates the status.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="status">if set to <c>true</c> [status].</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpPost]
+        [Authenticate]
+        public async Task<ActionResult> UpdateStatus(ToDo objects)
+        {
+            int id = Convert.ToInt32(objects.ToDoId);
+            bool status = Convert.ToBoolean(objects.Status);
+            if (id < 1)
+            {
+                return View();
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(APIURL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = await client.GetAsync(string.Concat(APIURL, "/TODO/", id));
+                if (response.IsSuccessStatusCode)
+                {
+                    // Get the existing item 
+                    ToDo todoItem = response.Content.ReadAsAsync<ToDo>().Result;
+
+                    // Update the item
+                    todoItem.Status = status;
+                    todoItem.UpdatedDateTime = DateTime.Now;
+                    todoItem.UserId = HttpContext.Session["UserId"] != null ? Convert.ToInt32(HttpContext.Session["UserId"]) : 0;
+
+                    string jsonString = JsonConvert.SerializeObject(todoItem);
+                    var jsoncontent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+                    // Update the entity
+                    HttpResponseMessage updateResponse = await client.PutAsync(string.Concat(APIURL, "/TODO"), jsoncontent);
                     return RedirectToAction("Index");
                 }
             }

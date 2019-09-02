@@ -1,6 +1,6 @@
 ﻿@model AppBoard.Entity.User
 @{
-    string errorMessageClass = Model == null? "invisible" : Model != null && Model.UserId == -1 ? "visible" : "invisible";
+    string errorMessageClass = Model == null ? "invisible" : Model != null && Model.UserId == -1 ? "visible" : "invisible";
 }
 <div class="row">
     @*<img class="hidden-xs" src="~/Images/todo.png" height="40" />*@
