@@ -18,7 +18,9 @@ namespace AppBoard.DAL
         /// Gets my todos.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
+        /// <param name="status">if set to <c>true</c> [status].</param>
+        /// <param name="today">The today.</param>
         /// <returns>IEnumerable&lt;ToDo&gt;.</returns>
-        IEnumerable<ToDo> GetMyTODOS(int userId);
+        IEnumerable<ToDo> GetMyTODOS(int userId, bool? status, DateTime? today);
     }
 }
